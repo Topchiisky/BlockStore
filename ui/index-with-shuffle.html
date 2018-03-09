@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Material Design Bootstrap</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="node_modules/mdbootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="node_modules/mdbootstrap/css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="node_modules/mdbootstrap/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Main navigation -->
+    <header>
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark primary-color">
+            <div class="container">
+                <!-- Navbar brand -->
+                <a class="navbar-brand" href="#">
+                    Block
+                    <img src="images/icon.png" height="30" class="d-inline-block align-top" alt="">
+                    <i>Store</i>
+                </a>
+
+                <span class="navbar-text white-text ml-auto">
+                    Donations raised: 0.00 ETH
+                    <button type="button" class="btn btn-default btn-sm my-2 my-sm-0">Donate</button>
+                    <button type="button" class="btn btn-outline-white btn-sm my-2 my-sm-0 ml-3 font-weight-bold">+</button>
+                </span>
+            </div>
+        </nav>
+        <!--/.Navbar-->
+    </header>
+    <!-- /Main navigation -->
+
+    <!-- Main layout -->
+    <main class="mt-5">
+
+        <!-- Main container -->
+        <div class="container">
+            <!-- Search -->
+            <div class="row">
+                <div class="col-sm-4 col-md-3 md-form form-lg mb-4">
+                    <input class="js-shuffle-search form-control" type="search" id="filters-search-input">
+                    <label for="filters-search-input" class="filter-label">Search</label>
+                </div>
+            </div>
+            <!-- /Search -->
+            <!-- Filters -->
+            <div class="row">
+                <div class="col-md-6 col-sm-12 mb-4">
+                    <div>
+                        <p class="filter-label">Filter</p>
+                        <div class="filter-options"> <!-- class="filter-options" -->
+                            <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="Car">Car</button>
+                            <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="nature">Nature</button>
+                            <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="animal">Animal</button>
+                            <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="city">City</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 mb-4">
+                    <fieldset class="filters-group text-right">
+                        <legend class="filter-label">Sort</legend>
+                        <div class="sort-options">
+                            <label class="btn active">
+                                <input type="radio" name="sort-value" value="dom" /> Default
+                            </label>
+                            <label class="btn">
+                                <input type="radio" name="sort-value" value="title" /> Title
+                            </label>
+                            <label class="btn">
+                                <input type="radio" name="sort-value" value="date-created" /> Date Created
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <!-- /Filters -->
+        </div>
+        <!-- /Main container -->
+
+        <!-- Shuffle container -->
+        <div class="container">
+            <div id="grid" class="row my-shuffle-container">
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Nature"]'>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="images/nature.jpg" class="img-fluid" alt="">
+                            <a href="#">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Title-->
+                            <h4 class="card-title">Trip to the Lake</h4>
+                            <!--Text-->
+                            <p class="card-text">A nice trip to the lake</p>
+                            <a href="#" class="btn btn-primary">More</a>
+                        </div>
+                    </div>
+                    <!--/.Card-->
+                </figure>
+
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Car"]'>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="images/car.jpg" class="img-fluid" alt="">
+                            <a href="#">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Title-->
+                            <h4 class="card-title">Car</h4>
+                            <!--Text-->
+                            <p class="card-text">A stupid fast car</p>
+                            <a href="#" class="btn btn-primary">More</a>
+                        </div>
+                    </div>
+                    <!--/.Card-->
+                </figure>
+
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Flowers"]'>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="images/flower.jpg" class="img-fluid" alt="">
+                            <a href="#">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Title-->
+                            <h4 class="card-title">Flowers</h4>
+                            <!--Text-->
+                            <p class="card-text">A vase of flowers</p>
+                            <a href="#" class="btn btn-primary">More</a>
+                        </div>
+                    </div>
+                    <!--/.Card-->
+                </figure>
+
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Kitten"]'>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="images/kitten.jpg" class="img-fluid" alt="">
+                            <a href="#">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Title-->
+                            <h4 class="card-title">Kitten</h4>
+                            <!--Text-->
+                            <p class="card-text">Fluffy Kitten</p>
+                            <a href="#" class="btn btn-primary">More</a>
+                        </div>
+                    </div>
+                    <!--/.Card-->
+                </figure>
+
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Minions"]'>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="images/minions.jpg" class="img-fluid" alt="">
+                            <a href="#">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Title-->
+                            <h4 class="card-title">Minions Movie</h4>
+                            <!--Text-->
+                            <p class="card-text">Comedy for all ages!</p>
+                            <a href="#" class="btn btn-primary">More</a>
+                        </div>
+                    </div>
+                    <!--/.Card-->
+                </figure>
+
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["S9Plus"]'>
+                    <!--Card-->
+                    <div class="card">
+
+                        <!--Card image-->
+                        <div class="view overlay">
+                            <img src="images/s9plus.jpg" class="img-fluid" alt="">
+                            <a href="#">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+
+                        <!--Card content-->
+                        <div class="card-body text-center">
+                            <!--Title-->
+                            <h4 class="card-title">S9+</h4>
+                            <!--Text-->
+                            <p class="card-text">Best smartphone</p>
+                            <a href="#" class="btn btn-primary">More</a>
+                        </div>
+                    </div>
+                    <!--/.Card-->
+                </figure>
+            </div>
+        </div>
+        <!-- /Shuffle container -->
+    </main>
+    <!-- /Main layout -->
+    <!--Footer-->
+    <footer class="page-footer font-small blue pt-4 mt-4">
+
+        <!--Footer Links-->
+        <div class="container text-center text-md-left">
+            <div class="row">
+
+                <!--First column-->
+                <div class="col-md-6">
+                    <h5 class="text-uppercase">Footer Content</h5>
+                    <p>Here you can use rows and columns here to organize your footer content.</p>
+                </div>
+                <!--/.First column-->
+
+                <!--Second column-->
+                <div class="col-md-6">
+                    <h5 class="text-uppercase">Links</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Link 1</a>
+                        </li>
+                        <li>
+                            <a href="#!">Link 2</a>
+                        </li>
+                        <li>
+                            <a href="#!">Link 3</a>
+                        </li>
+                        <li>
+                            <a href="#!">Link 4</a>
+                        </li>
+                    </ul>
+                </div>
+                <!--/.Second column-->
+            </div>
+        </div>
+        <!--/.Footer Links-->
+
+        <!--Copyright-->
+        <div class="footer-copyright py-3 text-center">
+            © 2018 Copyright:
+            <a href="https://mdbootstrap.com/material-design-for-bootstrap/"> MDBootstrap.com </a>
+        </div>
+        <!--/.Copyright-->
+
+    </footer>
+    <!--/.Footer-->
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/mdb.min.js"></script>
+    <!-- Shuffle -->
+    <script type="text/javascript" src="node_modules/shufflejs/dist/shuffle.js"></script>
+    <!-- Custom javascript -->
+    <script type="text/javascript" src="js/homepage.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "test_ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lite-server": "^2.3.0",
+    "mdbootstrap": "^4.5.0",
+    "shufflejs": "^5.1.1",
+    "web3": "github:ethereum/web3.js"
+  }
+}
