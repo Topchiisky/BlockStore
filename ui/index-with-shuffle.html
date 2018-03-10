@@ -31,7 +31,7 @@
                 </a>
 
                 <span class="navbar-text white-text ml-auto">
-                    <label id="donationRaised" >Donations raised:</label>
+                    <label id="donationRaised">Donations raised:</label>
                     <button type="button" class="btn btn-default btn-sm my-2 my-sm-0" data-toggle="modal" data-target="#modalDonationForm">Donate</button>
                     <button type="button" class="btn btn-outline-white btn-sm my-2 my-sm-0 ml-3 font-weight-bold" data-toggle="modal" data-target="#modalAddForSaleForm">+</button>
                 </span>
@@ -321,6 +321,33 @@
             </div>
         </div>
         <!-- /Add for sale Modal -->
+
+        <!--Modal: modalCookie-->
+        <div class="modal fade top" id="modalPending" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+            data-backdrop="false">
+            <div class="modal-dialog modal-frame modal-bottom modal-notify modal-info" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header text-center">
+                        <img style="height: 25px;" src="images/Spinner-1s-50px.gif">
+                        <p class="modal-title w-100 font-weight-bold">Pending Transactions</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <!-- Header -->
+                    <!--Body-->
+                    <div class="modal-body">
+                        <div id="pendingTransactions">
+
+                        </div>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalCookie-->
 
         <!-- /Modals-->
     </main>

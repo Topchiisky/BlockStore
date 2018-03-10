@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ipfs-api": "^18.1.2",
     "lite-server": "^2.3.0",
     "mdbootstrap": "^4.5.0",
     "shufflejs": "^5.1.1",

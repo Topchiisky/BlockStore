@@ -198,6 +198,24 @@ MyWeb3.prototype.checkForWeb3 = function () {
         return false;
     }
 
+    window.web3.version.getNetwork((err, netId) => {
+        switch (netId) {
+          case "1":
+            console.log('This is mainnet');
+            MyWeb3.networkAddress = "https://etherscan.io/tx/";
+            break
+          case "2":
+            console.log('This is the deprecated Morden test network.');
+            break
+          case "3":
+            console.log('This is the ropsten test network.');
+            MyWeb3.networkAddress = "https://ropsten.etherscan.io/tx/";
+            break
+          default:
+            MyWeb3.networkAddress = "https://ropsten.etherscan.io/tx/";
+        }
+      });
+
     return true;
 };
 
@@ -233,8 +251,8 @@ MyWeb3.prototype.makeDonation = function () {
     }
     MyWeb3.contract.donate({ from: window.web3.eth.defaultAccount, gas: 3000000, value: window.web3.toWei(donation, 'ether') }, (err, res) => {
         if (!err) {
-            //TODO add link to monitoring modal
-            console.log(res);
+            console.log('making donation '+ res);
+            window.customHandlers.pendingTransactions(res, 'add', 'Donation:');
         }
     });
 
@@ -246,6 +264,8 @@ MyWeb3.prototype.registerDonationEvent = function () {
     MyWeb3.donationEvent.watch(function (err, result) {
         if (!err) {
             window.myWeb3.getTotalDonations();
+            console.log('Donation made: ' + JSON.stringify(result));
+            window.customHandlers.pendingTransactions(result.transactionHash, 'remove');
         }
     });
 };
@@ -271,6 +291,37 @@ CustomHandlers.prototype.addMakeDonation = function (el) {
     el.on('click', function () {
         window.myWeb3.makeDonation();
     });
+};
+
+CustomHandlers.prototype.pendingTransactions = function (transactionHash, state, msg) {
+    var modalPending = $('#modalPending');
+    var pendingTransactions = $('#pendingTransactions');
+
+    if (state == 'add') {
+        var p = $("<p>");
+        var a = $("<a>");
+        p.attr("id", transactionHash);
+        a.attr("href", MyWeb3.networkAddress + transactionHash);
+        a.attr("target", "_blank");
+
+        var textToAdd = ((typeof msg !== undefined) && (msg != '')) ? msg + " " + transactionHash : transactionHash;
+
+        a.text(textToAdd);
+
+        p.append(a);
+
+        pendingTransactions.append(p);
+        if ($.inArray('show', modalPending.attr('class').split(' ')) < 0) {
+            modalPending.modal('toggle');
+        }
+    }
+
+    if (state == 'remove') {
+        $("#"+transactionHash).remove();
+        if (pendingTransactions.children().length == 0 && $.inArray('show', modalPending.attr('class').split(' ')) >= 0) {
+            $('#modalPending').modal('toggle');
+        }
+    }
 };
 
 document.addEventListener('DOMContentLoaded', function () {

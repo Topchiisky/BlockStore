@@ -266,4 +266,4 @@ var ContractABI = [
     }
 ];
 
-var ContractAddress = "0x36275d539511f77abc145d905c74ffaecabdf416";
+var ContractAddress = "0xe007467b8d301a391361882b75becaa265de20c4";
