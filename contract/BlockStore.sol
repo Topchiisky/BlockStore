@@ -18,10 +18,12 @@ contract BlockStore {
     struct ItemForSale {
         address seller;
         address buyer;
+        string buyerInfo;
         //for now string later will be hash from IPFS
         string itemDescription;
         uint256 price;
         ItemState state;
+        uint256 creationTime;
     }
     
     //items in the store
@@ -54,17 +56,24 @@ contract BlockStore {
         item.itemDescription = _itemDescription;
         item.price = _price;
         item.state = ItemState.Created;
+        uint256 time = block.timestamp;
+        item.creationTime = time;
         itemsForSale.push(item);
+        
+        emit registerItem(_itemDescription, _price, time);
     }
     
     //Attemt to buy the goods at the given index
     //In order to try make the buyer not to cheat, the buyer is forced to make a deposit.
     //The deposit is equals to the price of the item.
     //The buyer will receive his deposit once he confirms that he has received the goods.
-    function buyItem(uint256 _itemIdx) canBuy(_itemIdx, msg.value) public payable {
+    function buyItem(uint256 _itemIdx, string _buyerInfo) canBuy(_itemIdx, msg.value) public payable {
         ItemForSale storage itemToBuy = itemsForSale[_itemIdx];
         itemToBuy.buyer = msg.sender;
+        itemToBuy.buyerInfo = _buyerInfo;
         itemToBuy.state = ItemState.Locked;
+        
+        emit itemBought(_itemIdx, itemToBuy.itemDescription, block.timestamp);
     }
     
     //Buyer confirms that he has received the item so he and the seller can receive their deposits;
@@ -75,12 +84,16 @@ contract BlockStore {
         //refunds seller
         itemReceived.seller.transfer(itemReceived.price*2);
         itemReceived.state = ItemState.Inactive;
+        
+        emit confirmItem(_itemIdx, itemReceived.itemDescription, block.timestamp);
     }
     
     //Everyone can donate funds to the BlockStore
     function donate() public payable {
         currentDonations += msg.value;
         totalAmountOfDonations += msg.value;
+        
+        emit donationMade();
     }
     
     //Only owner can withdraw if there is donation made
@@ -104,6 +117,18 @@ contract BlockStore {
         return this.balance;
     }
     
+    //cancel sale, only seller of the item can cancel
+    function cancelSale(uint256 _itemIdx) canCancel (_itemIdx, msg.sender) public {
+        ItemForSale storage item = itemsForSale[_itemIdx];
+        item.state = ItemState.Inactive;
+        if (item.buyer != address(0)) {
+            item.buyer.transfer(item.price*2);
+        }
+        item.seller.transfer(item.price);
+        
+        emit itemCanceled(_itemIdx, item.itemDescription, block.timestamp);
+    } 
+    
     //All modifiers go below
     
     //is the function caller the contract owner
@@ -120,7 +145,6 @@ contract BlockStore {
     
     //can item be registered
     modifier canRegisterItemForSale(string _itemDescription, uint256 _price, uint256 _msgValue) {
-        //logCanRegisterForSale(_itemDescription, _price, _msgValue);
         bytes memory itemDesc = bytes(_itemDescription);
         require(itemDesc.length > 0);
         require(_price > 0);
@@ -146,6 +170,22 @@ contract BlockStore {
         _;
     }
     
+    //only the seller can cancel sale
+    modifier canCancel(uint256 _itemIdx, address _msgSender) {
+        ItemForSale memory item = itemsForSale[_itemIdx];
+        require(item.seller == _msgSender);
+        require(item.state == ItemState.Created || item.state == ItemState.Locked);
+        _;
+    }
+    
     //events goes below
-    //event logCanRegisterForSale(string _itemDescription, uint256 _price, uint256 _msgValue);
+    event registerItem(string _itemDescription, uint256 _price, uint256 _time);
+    
+    event itemBought(uint256 _idx, string _itemDescription, uint256 _time);
+    
+    event confirmItem(uint256 _itemIdx, string itemDescription, uint256 _time);
+    
+    event donationMade();
+    
+    event itemCanceled(uint256 _itemIdx, string itemDescription, uint256 _time);
 }
