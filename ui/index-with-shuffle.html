@@ -31,9 +31,9 @@
                 </a>
 
                 <span class="navbar-text white-text ml-auto">
-                    Donations raised: 0.00 ETH
-                    <button type="button" class="btn btn-default btn-sm my-2 my-sm-0">Donate</button>
-                    <button type="button" class="btn btn-outline-white btn-sm my-2 my-sm-0 ml-3 font-weight-bold">+</button>
+                    <label id="donationRaised" >Donations raised:</label>
+                    <button type="button" class="btn btn-default btn-sm my-2 my-sm-0" data-toggle="modal" data-target="#modalDonationForm">Donate</button>
+                    <button type="button" class="btn btn-outline-white btn-sm my-2 my-sm-0 ml-3 font-weight-bold" data-toggle="modal" data-target="#modalAddForSaleForm">+</button>
                 </span>
             </div>
         </nav>
@@ -59,7 +59,8 @@
                 <div class="col-md-6 col-sm-12 mb-4">
                     <div>
                         <p class="filter-label">Filter</p>
-                        <div class="filter-options"> <!-- class="filter-options" -->
+                        <div class="filter-options">
+                            <!-- class="filter-options" -->
                             <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="Car">Car</button>
                             <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="nature">Nature</button>
                             <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="animal">Animal</button>
@@ -69,16 +70,19 @@
                 </div>
                 <div class="col-md-6 col-sm-12 mb-4">
                     <fieldset class="filters-group text-right">
-                        <legend class="filter-label">Sort</legend>
-                        <div class="sort-options">
-                            <label class="btn active">
-                                <input type="radio" name="sort-value" value="dom" /> Default
+                        <p class="filter-label">Sort</p>
+                        <div class="btn-group sort-options">
+                            <label for="radio1" class="btn btn-primary active">
+                                <a>Default</a>
+                                <input style="visibility: hidden;" type="radio" id="radio1" name="sort-value" value="dom" checked>
                             </label>
-                            <label class="btn">
-                                <input type="radio" name="sort-value" value="title" /> Title
+                            <label for="radio2" class="btn btn-primary">
+                                <a>Title</a>
+                                <input style="visibility: hidden" type="radio" id="radio2" name="sort-value" value="title">
                             </label>
-                            <label class="btn">
-                                <input type="radio" name="sort-value" value="date-created" /> Date Created
+                            <label for="radio3" class="btn btn-primary">
+                                <a>Date Created</a>
+                                <input style="visibility: hidden" type="radio" id="radio3" name="sort-value" value="date-created">
                             </label>
                         </div>
                     </fieldset>
@@ -91,7 +95,7 @@
         <!-- Shuffle container -->
         <div class="container">
             <div id="grid" class="row my-shuffle-container">
-                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Nature"]'>
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Nature"]' data-date-created="2016-07-01" data-title="Trip to the Lake">
                     <!--Card-->
                     <div class="card">
 
@@ -106,7 +110,7 @@
                         <!--Card content-->
                         <div class="card-body text-center">
                             <!--Title-->
-                            <h4 class="card-title">Trip to the Lake</h4>
+                            <h4 class="card-title picture-item__title">Trip to the Lake</h4>
                             <!--Text-->
                             <p class="card-text">A nice trip to the lake</p>
                             <a href="#" class="btn btn-primary">More</a>
@@ -115,7 +119,7 @@
                     <!--/.Card-->
                 </figure>
 
-                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Car"]'>
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Car"]' data-date-created="2015-07-01" data-title="Car">
                     <!--Card-->
                     <div class="card">
 
@@ -130,7 +134,7 @@
                         <!--Card content-->
                         <div class="card-body text-center">
                             <!--Title-->
-                            <h4 class="card-title">Car</h4>
+                            <h4 class="card-title picture-item__title">Car</h4>
                             <!--Text-->
                             <p class="card-text">A stupid fast car</p>
                             <a href="#" class="btn btn-primary">More</a>
@@ -139,7 +143,7 @@
                     <!--/.Card-->
                 </figure>
 
-                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Flowers"]'>
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Flowers"]' data-date-created="2018-07-01" data-title="Flowers">
                     <!--Card-->
                     <div class="card">
 
@@ -154,7 +158,7 @@
                         <!--Card content-->
                         <div class="card-body text-center">
                             <!--Title-->
-                            <h4 class="card-title">Flowers</h4>
+                            <h4 class="card-title picture-item__title">Flowers</h4>
                             <!--Text-->
                             <p class="card-text">A vase of flowers</p>
                             <a href="#" class="btn btn-primary">More</a>
@@ -163,7 +167,7 @@
                     <!--/.Card-->
                 </figure>
 
-                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Kitten"]'>
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Kitten"]' data-date-created="2016-12-01" data-title="Kitten">
                     <!--Card-->
                     <div class="card">
 
@@ -178,7 +182,7 @@
                         <!--Card content-->
                         <div class="card-body text-center">
                             <!--Title-->
-                            <h4 class="card-title">Kitten</h4>
+                            <h4 class="card-title picture-item__title">Kitten</h4>
                             <!--Text-->
                             <p class="card-text">Fluffy Kitten</p>
                             <a href="#" class="btn btn-primary">More</a>
@@ -187,7 +191,7 @@
                     <!--/.Card-->
                 </figure>
 
-                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Minions"]'>
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["Minions"]' data-date-created="2017-08-01" data-title="Minions">
                     <!--Card-->
                     <div class="card">
 
@@ -202,7 +206,7 @@
                         <!--Card content-->
                         <div class="card-body text-center">
                             <!--Title-->
-                            <h4 class="card-title">Minions Movie</h4>
+                            <h4 class="card-title picture-item__title">Minions Movie</h4>
                             <!--Text-->
                             <p class="card-text">Comedy for all ages!</p>
                             <a href="#" class="btn btn-primary">More</a>
@@ -211,7 +215,7 @@
                     <!--/.Card-->
                 </figure>
 
-                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["S9Plus"]'>
+                <figure class="col-lg-4 col-md-6 mb-4 picture-item" data-groups='["S9Plus"]' data-date-created="2018-03-01" data-title="S9Plus">
                     <!--Card-->
                     <div class="card">
 
@@ -228,7 +232,7 @@
                             <!--Title-->
                             <h4 class="card-title">S9+</h4>
                             <!--Text-->
-                            <p class="card-text">Best smartphone</p>
+                            <p class="card-text picture-item__title">Best smartphone</p>
                             <a href="#" class="btn btn-primary">More</a>
                         </div>
                     </div>
@@ -237,49 +241,95 @@
             </div>
         </div>
         <!-- /Shuffle container -->
+
+        <!-- Modals-->
+        <!-- Donation Modal -->
+        <div class="modal fade" id="modalDonationForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Thank You for your generous donation!</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body mx-3">
+                        <div class="md-form mb-5">
+                            <i class="fa fa-money prefix grey-text"></i>
+                            <input type="text" id="modalDonationInput" class="form-control validate">
+                            <label for="modalDonationInput">Amount: (ETH)</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button id="sendDonation" class="btn btn-primary">Send
+                            <i class="fa fa-paper-plane-o ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Donation Modal -->
+
+        <!-- Add for sale Modal -->
+        <div class="modal fade" id="modalAddForSaleForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">What are you selling?!</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body mx-3">
+                        <!-- title -->
+                        <div class="md-form mb-4">
+                            <i class="fa fa-tags prefix grey-text"></i>
+                            <input type="text" id="modalAddForSaleTitleInput" class="form-control validate">
+                            <label for="modalAddForSaleTitleInput">Title:</label>
+                        </div>
+                        <!-- /title -->
+                        <!-- description -->
+                        <div class="md-form mb-4">
+                            <i class="fa fa-commenting-o prefix grey-text"></i>
+                            <input type="text" id="modalAddForSaleDescriptionInput" class="form-control validate">
+                            <label for="modalAddForSaleDescriptionInput">Description:</label>
+                        </div>
+                        <!-- /description -->
+                        <!-- price -->
+                        <div class="md-form mb-4">
+                            <i class="fa fa-money prefix grey-text"></i>
+                            <input type="text" id="modalAddForSalePriceInput" class="form-control validate">
+                            <label for="modalAddForSalePriceInput">Price:</label>
+                        </div>
+                        <!-- /price -->
+                        <!-- image -->
+                        <div class="md-form mb-4">
+                            <i class="fa fa-image prefix grey-text"></i>
+                            <input type="text" id="modalAddForSalePriceImage" class="form-control validate" readonly>
+                            <div class="input-group">`
+                                <button type="button" class="btn btn-primary btn-sm">Browse&hellip;</button>
+                            </div>
+                        </div>
+                        <!-- /image -->
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button class="btn btn-primary">Send
+                                <i class="fa fa-paper-plane-o ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add for sale Modal -->
+
+        <!-- /Modals-->
     </main>
     <!-- /Main layout -->
     <!--Footer-->
-    <footer class="page-footer font-small blue pt-4 mt-4">
-
-        <!--Footer Links-->
-        <div class="container text-center text-md-left">
-            <div class="row">
-
-                <!--First column-->
-                <div class="col-md-6">
-                    <h5 class="text-uppercase">Footer Content</h5>
-                    <p>Here you can use rows and columns here to organize your footer content.</p>
-                </div>
-                <!--/.First column-->
-
-                <!--Second column-->
-                <div class="col-md-6">
-                    <h5 class="text-uppercase">Links</h5>
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="#!">Link 1</a>
-                        </li>
-                        <li>
-                            <a href="#!">Link 2</a>
-                        </li>
-                        <li>
-                            <a href="#!">Link 3</a>
-                        </li>
-                        <li>
-                            <a href="#!">Link 4</a>
-                        </li>
-                    </ul>
-                </div>
-                <!--/.Second column-->
-            </div>
-        </div>
-        <!--/.Footer Links-->
-
+    <footer class="page-footer font-small blue">
         <!--Copyright-->
         <div class="footer-copyright py-3 text-center">
-            © 2018 Copyright:
-            <a href="https://mdbootstrap.com/material-design-for-bootstrap/"> MDBootstrap.com </a>
+            © 2018 Copyright: BlockStore Inc.
         </div>
         <!--/.Copyright-->
 
@@ -296,6 +346,10 @@
     <script type="text/javascript" src="node_modules/mdbootstrap/js/mdb.min.js"></script>
     <!-- Shuffle -->
     <script type="text/javascript" src="node_modules/shufflejs/dist/shuffle.js"></script>
+    <!-- Web3 -->
+    <script type="text/javascript" src="node_modules/web3/dist/web3.min.js"></script>
+    <!-- Contract information-->
+    <script type="text/javascript" src="js/contract.js"></script>
     <!-- Custom javascript -->
     <script type="text/javascript" src="js/homepage.js"></script>
 </body>
