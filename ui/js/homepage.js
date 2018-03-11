@@ -537,6 +537,9 @@ function createItem(idx, itemTitle, itemDescription, itemTag, itemPicture, price
     if ($('#grid').find('#' + idx).length > 0) {
         return;
     }
+    if (parseInt(state)>1) {
+        return;
+    }
     var date = new Date(parseInt(time) * 1000);
     var dateString = date.getUTCFullYear().toString() + '-' + date.getUTCMonth().toString() + '-' + date.getUTCDate().toString();
     var ipfsImage = 'https://ipfs.io/ipfs/' + itemPicture;
@@ -633,6 +636,11 @@ function onClickMore(itemIdx) {
     $('#modalViewItemDescription').text('Description: ' + card.find('.item-description').text());
     $('#modalViewItemPrice').text(card.find('.item-price').text() + ' (ETH)');
 
+
+    $('#confirmBtn').show();
+    $('#cancelBtn').show();
+    $('#buyBtn').show();
+
     if (state == '0') {
         $('#modalBuyerInputPreview').hide();
         $('#confirmBtn').hide();
@@ -643,6 +651,9 @@ function onClickMore(itemIdx) {
         $('#modalBuyerInputWrapper').hide();
         $('#modalBuyerInputPreview').text('Buyer info: ' + card.attr('data-buyerInfo'));
         $('#modalBuyerInputPreview').show();
+        if (account == card.attr('data-seller')) {
+            $('#confirmBtn').hide();
+        }
     }
 
     if (account != card.attr('data-seller')) {
