@@ -660,6 +660,10 @@ function onClickMore(itemIdx) {
         $('#cancelBtn').hide();
     }
 
+    $('#buyBtn').off();
+    $('#confirmBtn').off();
+    $('#cancelBtn').off();
+
     $('#buyBtn').on('click', function () {
         buyItem(itemIdx, card.find('.item-price').text().split(" ")[1], card.attr('data-title'));
     });
