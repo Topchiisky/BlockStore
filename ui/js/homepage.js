@@ -183,6 +183,10 @@ var MyWeb3 = function () {
     this.createContract();
     this.getTotalDonations();
     this.registerDonationEvent();
+    this.registerItemForSaleEvent();
+    this.registerItemBought();
+    this.registerConfirmedItemEvent();
+    this.registerCancelItemEvent();
     console.log('we have web3 provider GO GO GO');
 };
 
@@ -270,17 +274,117 @@ MyWeb3.prototype.registerDonationEvent = function () {
     });
 };
 
-MyWeb3.prototype.registerItemForSale = function (itemTitle, itemDescription, itemPicture, price) {
-    MyWeb3.contract.registerItemForSale(itemTitle, itemDescription, itemPicture, window.web3.toWei(price, 'ether'),{
-        from: window.web3.eth.defaultAccount, 
-        gas: 3000000, 
+MyWeb3.prototype.registerItemForSale = function (itemTitle, itemDescription, itemTag, itemPicture, price) {
+    MyWeb3.contract.registerItemForSale(itemTitle, itemDescription, itemTag, itemPicture, window.web3.toWei(price, 'ether'), {
+        from: window.web3.eth.defaultAccount,
+        gas: 3000000,
         value: window.web3.toWei(price, 'ether')
     }, (err, res) => {
         if (!err) {
             console.log('sending for sale ' + res);
-            window.customHandlers.pendingTransactions(res, 'add', itemTitle);
+            window.customHandlers.pendingTransactions(res, 'add', 'Selling ' + itemTitle + ':');
         } else {
             alert("Oups... something went wrong!");
+        }
+    });
+};
+
+MyWeb3.prototype.buyItem = function (idx, buyerInfo, price, itemTitle) {
+    MyWeb3.contract.buyItem(idx, buyerInfo, {
+        from: window.web3.eth.defaultAccount,
+        gas: 3000000,
+        value: window.web3.toWei(price * 2, 'ether')
+    }, (err, res) => {
+        if (!err) {
+            console.log('buying Item ' + res);
+            window.customHandlers.pendingTransactions(res, 'add', 'Buying ' + itemTitle + ':');
+        } else {
+            alert("Oups... something went wrong!");
+        }
+    });
+};
+
+MyWeb3.prototype.confirmItem = function (idx, itemTitle) {
+    MyWeb3.contract.confirmItemReceived(idx, {
+        from: window.web3.eth.defaultAccount,
+        gas: 3000000
+    }, (err, res) => {
+        if (!err) {
+            console.log('confirming Item ' + res);
+            window.customHandlers.pendingTransactions(res, 'add', 'Confirming ' + itemTitle + ':');
+        } else {
+            alert("Oups... something went wrong!");
+        }
+    });
+};
+
+MyWeb3.prototype.cancelItem = function (idx, itemTitle) {
+    MyWeb3.contract.cancelSale(idx, {
+        from: window.web3.eth.defaultAccount,
+        gas: 3000000
+    }, (err, res) => {
+        if (!err) {
+            console.log('canceling Item ' + res);
+            window.customHandlers.pendingTransactions(res, 'add', 'Canceling ' + itemTitle + ':');
+        } else {
+            alert("Oups... something went wrong!");
+        }
+    });
+};
+
+MyWeb3.prototype.registerCancelItemEvent = function () {
+    MyWeb3.itemCanceledEvent = MyWeb3.contract.itemCanceled({}, 'latest');
+    MyWeb3.itemCanceledEvent.watch(function (err, result) {
+        if (!err) {
+            console.log(result);
+            var idx = result.args._itemIdx.toString();
+            removeCard(idx);
+            window.customHandlers.pendingTransactions(result.transactionHash, 'remove');
+        }
+    });
+};
+
+MyWeb3.prototype.registerConfirmedItemEvent = function () {
+    MyWeb3.itemBoughtEvent = MyWeb3.contract.confirmItem({}, 'latest');
+    MyWeb3.itemBoughtEvent.watch(function (err, result) {
+        if (!err) {
+            console.log(result);
+            var idx = result.args._itemIdx.toString();
+            removeCard(idx);
+            window.customHandlers.pendingTransactions(result.transactionHash, 'remove');
+        }
+    });
+};
+
+MyWeb3.prototype.registerItemForSaleEvent = function () {
+    MyWeb3.itemForSaleEvent = MyWeb3.contract.registerItem({}, 'latest');
+    MyWeb3.itemForSaleEvent.watch(function (err, result) {
+        if (!err) {
+            console.log(result);
+            var idx = result.args._idx.toString();
+            var itemTitle = result.args._itemTitle;
+            var itemDescription = result.args._itemDescription;
+            var itemTag = result.args._itemTag;
+            var itemPicture = result.args._itemPicture;
+            var price = window.web3.fromWei(result.args._price.toString(), 'ether');
+            var seller = result.args._seller;
+            var time = result.args._time.toString();
+            createItem(idx, itemTitle, itemDescription, itemTag, itemPicture, price, '0', seller, null, null,time);
+            window.customHandlers.pendingTransactions(result.transactionHash, 'remove');
+        }
+    });
+};
+
+MyWeb3.prototype.registerItemBought = function () {
+    MyWeb3.itemBoughtEvent = MyWeb3.contract.itemBought({}, 'latest');
+    MyWeb3.itemBoughtEvent.watch(function (err, result) {
+        if (!err) {
+            console.log(result);
+            var idx = result.args._idx.toString();
+            var buyer = result.args._buyer;
+            var buyerInfo = result.args._buyerInfo;
+            updateCardBought(idx, buyer, buyerInfo);
+            window.customHandlers.pendingTransactions(result.transactionHash, 'remove');
         }
     });
 };
@@ -339,11 +443,11 @@ CustomHandlers.prototype.pendingTransactions = function (transactionHash, state,
     }
 };
 
-CustomHandlers.prototype.browseButton = function(button, input, textField) {
-    button.on('click', function() {
+CustomHandlers.prototype.browseButton = function (button, input, textField) {
+    button.on('click', function () {
         input.click();
     });
-    input.on('change', function(){
+    input.on('change', function () {
         if ($('#imageInput')[0].files[0] === undefined) {
             return;
         }
@@ -355,14 +459,14 @@ CustomHandlers.prototype.browseButton = function(button, input, textField) {
     });
 };
 
-CustomHandlers.prototype.clearModal = function(closeBtn, modal) {
-    closeBtn.on('click', function() {
+CustomHandlers.prototype.clearModal = function (closeBtn, modal) {
+    closeBtn.on('click', function () {
         modal.find("input[type=text], textarea, file").val("").trigger('keyup').trigger('focusout');
     });
 };
 
-CustomHandlers.prototype.sendForSale = function(){
-    $('#sendForSale').on('click', function(){
+CustomHandlers.prototype.sendForSale = function () {
+    $('#sendForSale').on('click', function () {
         if ($('#imageInput')[0].files[0].type.indexOf('image') < 0) {
             alert("Wrong file format! Please select an image!");
             return;
@@ -380,14 +484,21 @@ CustomHandlers.prototype.sendForSale = function(){
         }
         var itemDescription = $('#modalAddForSaleDescriptionInput').val();
 
+        if ($('#modalAddForSaleTag').val() == '') {
+            alert("Please provide a tag");
+            return;
+        }
+        var itemTag = $('#modalAddForSaleTag').val();
+
         if (!$.isNumeric($('#modalAddForSalePriceInput').val())) {
             alert("Please provide a price");
             return;
         }
+
         var price = $('#modalAddForSalePriceInput').val();
 
-        var callback = function(imageHash){
-            window.myWeb3.registerItemForSale(itemTitle, itemDescription, imageHash, price);
+        var callback = function (imageHash) {
+            window.myWeb3.registerItemForSale(itemTitle, itemDescription, itemTag, imageHash, price);
         };
 
         window.myIPFS.uploadImage($('#imageInput')[0].files[0], callback);
@@ -396,7 +507,7 @@ CustomHandlers.prototype.sendForSale = function(){
     });
 };
 
-var MyIPFS = function(){
+var MyIPFS = function () {
     this.ipfs = window.IpfsApi(IPFS_SETTINGS.host, IPFS_SETTINGS.port);
 };
 
@@ -404,28 +515,193 @@ MyIPFS.prototype.getIpfs = function () {
     return this.ipfs;
 };
 
-MyIPFS.prototype.uploadImage = function(imageFile, callback) {
+MyIPFS.prototype.uploadImage = function (imageFile, callback) {
     var _ipfs = this.getIpfs();
     var reader = new FileReader();
-    reader.onloadend = function() {
+    reader.onloadend = function () {
         var buf = _ipfs.Buffer(reader.result);
         _ipfs.add(buf, (err, result) => {
-            if(err) {
+            if (err) {
                 console.log(err);
                 return;
-              }
-              callback(result[0].hash);
-              var url = `https://ipfs.io/ipfs/${result[0].hash}`;
-              console.log(`Url --> ${url}`);
+            }
+            callback(result[0].hash);
+            var url = `https://ipfs.io/ipfs/${result[0].hash}`;
+            console.log(`Url --> ${url}`);
         });
     };
     reader.readAsArrayBuffer(imageFile);
+};
+
+function createItem(idx, itemTitle, itemDescription, itemTag, itemPicture, price, state, seller, buyer, buyerAddress, time) {
+    if ($('#grid').find('#' + idx).length > 0) {
+        return;
+    }
+    var date = new Date(parseInt(time) * 1000);
+    var dateString = date.getUTCFullYear().toString() + '-' + date.getUTCMonth().toString() + '-' + date.getUTCDate().toString();
+    var ipfsImage = 'https://ipfs.io/ipfs/' + itemPicture;
+    var buyerInfo = (buyer != null) ? 'data-buyerInfo=' + buyer : '';
+    var buyerAddress = (buyerAddress != null) ? 'data-buyerAddress=' + buyerAddress : '';
+    var htmlStr = '<figure id="' + idx + '" class="col-lg-4 col-md-6 mb-4 picture-item" data-groups=\'["' + itemTag + '"]\' data-date-created="' + dateString + '" data-title="' + itemTitle + '" data-seller=' + seller + ' data-itemState=' + state + ' ' + buyerInfo + ' ' + buyerAddress + ' >' +
+        '<!--Card-->' +
+        '<div class="card">' +
+        '<!--Card image-->' +
+        '<div class="view overlay">' +
+        '<img src="' + ipfsImage + '" class="img-fluid" alt="">' +
+        '<a href="#">' +
+        '<div class="mask rgba-white-slight"></div>' +
+        '</a>' +
+        '</div>' +
+        '<!--Card content-->' +
+        '<div class="card-body text-center">' +
+        '<!--Title-->' +
+        '<h4 class="card-title picture-item__title">' + itemTitle + '</h4>' +
+        '<!--Text-->' +
+        '<p class="card-text item-description">' + itemDescription + '</p>' +
+        '<p class="card-text item-price">Price: ' + price + ' ETH</p>' +
+        '<a class="btn btn-primary" onclick="onClickMore(' + idx + ')">More</a>' +
+        '</div>' +
+        '</div>' +
+        '<!--/.Card-->' +
+        '</figure>';
+    var newItem = $(htmlStr);
+    $(window.demo.shuffle.element).append(newItem);
+    window.demo.shuffle.add(newItem);
+    window.demo.shuffle.update();
+
+    if ($('.filter-options').find('#' + itemTag) > 0) {
+        return;
+    }
+
+    $('.filter-options').append('<button id="' + itemTag + '" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off" data-group="' + itemTag + '">' + itemTag + '</button>');
+    window.demo.addFilterButtons();
+};
+
+function loadCardsFromContract() {
+    MyWeb3.contract.checkItemsForSaleLength((err, res) => {
+
+        var buyerInfoCallBack = function(idx, itemTitle, itemDescription, itemTag, itemPicture, price, state, seller, buyer, buyerAddress) {
+            MyWeb3.contract.getBuyerDetails(idx, (err, ress) => {
+                if (!err) {
+                    var buyer = ress[0];
+                    var buyerAddress = ress[1];
+                    var time = ress[2];
+                    createItem(idx, itemTitle, itemDescription, itemTag, itemPicture, price, state, seller, buyer, buyerAddress, time);
+                } else {
+                    alert("Oups... something went wrong!");
+                }
+            });
+        };
+        if (!err) {
+            console.log('items length ' + res);
+            var length = parseInt(res.toString());
+            for (var i = 0; i < length; i++) {
+                var idx = i;
+                MyWeb3.contract.viewItemForSale(idx, (err, ress) => {
+                    if (!err) {
+                        console.log(ress);
+                        var itemTitle = ress[0];
+                        var itemDescription = ress[1];
+                        var itemTag = ress[2];
+                        var itemPicture = ress[3];
+                        var price = window.web3.fromWei(ress[4].toString(), 'ether');
+                        var state = ress[5];
+                        var seller = ress[6];
+                        var id = ress[7].toString();
+                        buyerInfoCallBack(id, itemTitle, itemDescription, itemTag, itemPicture, price, state, seller);
+                    }
+                    else {
+                        alert("Oups... something went wrong!");
+                    }
+                });
+            }
+        } else {
+            alert("Oups... something went wrong!");
+        }
+    });
+};
+
+function onClickMore(itemIdx) {
+    var modal = $('#modalViewItemForm');
+    var account = window.web3.eth.defaultAccount;
+    var card = $('#' + itemIdx);
+    var state = card.attr('data-itemState');
+    var image = $('#0').find('img').attr('src');
+    var modalPreviewImage = $('#modalPreviewImage');
+    modalPreviewImage.attr('src', image);
+    $('#modalViewItemTitle').text('Title: ' + card.attr('data-title'));
+    $('#modalViewItemDescription').text('Description: ' + card.find('.item-description').text());
+    $('#modalViewItemPrice').text(card.find('.item-price').text() + ' (ETH)');
+
+    if (state == '0') {
+        $('#modalBuyerInputPreview').hide();
+        $('#confirmBtn').hide();
+    }
+
+    if (state == '1') {
+        $('#buyBtn').hide();
+        $('#modalBuyerInputWrapper').hide();
+        $('#modalBuyerInputPreview').text('Buyer info: ' + card.attr('data-buyerInfo'));
+        $('#modalBuyerInputPreview').show();
+    }
+
+    if (account != card.attr('data-seller')) {
+        $('#cancelBtn').hide();
+    }
+
+    $('#buyBtn').on('click', function () {
+        buyItem(itemIdx, card.find('.item-price').text().split(" ")[1], card.attr('data-title'));
+    });
+
+    $('#confirmBtn').on('click', function () {
+        confirmItem(itemIdx, card.attr('data-title'));
+    });
+
+    $('#cancelBtn').on('click', function () {
+        cancelItem(itemIdx, card.attr('data-title'));
+    });
+
+    modal.modal('toggle');
+};
+
+function updateCardBought(idx, buyer, buyerInfo) {
+    var card = $('#' + idx);
+    card.attr('data-itemState', 1);
+    card.attr('data-buyerInfo', buyerInfo);
+    card.attr('data-buyerAddress', buyer);
+};
+
+function removeCard(idx) {
+    var card = $('#' + idx);
+    window.demo.shuffle.remove(card);
+    card.remove();
+};
+
+function buyItem(idx, price, title) {
+    var buyerInfo = $('#modalBuyerInput').val();
+    if (buyerInfo == '') {
+        alert('Enter buyer information!');
+        return;
+    }
+    window.myWeb3.buyItem(idx, buyerInfo, price, title);
+    $('#modalViewItemForm').modal('toggle');
+};
+
+function confirmItem(idx, itemTitle) {
+    window.myWeb3.confirmItem(idx, itemTitle);
+    $('#modalViewItemForm').modal('toggle');
+}
+
+function cancelItem(idx, itemTitle) {
+    window.myWeb3.cancelItem(idx, itemTitle);
+    $('#modalViewItemForm').modal('toggle');
 };
 
 document.addEventListener('DOMContentLoaded', function () {
     window.demo = new Demo(document.getElementById('grid'));
     window.myWeb3 = new MyWeb3();
     window.myIPFS = new MyIPFS();
+    loadCardsFromContract();
     window.customHandlers = new CustomHandlers();
     window.customHandlers.addNumericValidation($('#modalDonationInput'));
     window.customHandlers.addNumericValidation($('#modalAddForSalePriceInput'));

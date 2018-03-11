@@ -21,6 +21,7 @@ contract BlockStore {
         string buyerInfo;
         string itemTitle;
         string itemDescription;
+        string itemTag;
         string itemPicture;
         uint256 price;
         ItemState state;
@@ -36,9 +37,15 @@ contract BlockStore {
     }
     
     //TODO find better solution not to loop everything
-    function viewItemForSale(uint256 idx) public view returns(string, string, string, uint256, ItemState){
+    function viewItemForSale(uint256 idx) public view returns(string, string, string, string, uint256, ItemState, address, uint256){
         ItemForSale memory item = itemsForSale[idx];
-        return (item.itemTitle, item.itemDescription, item.itemPicture, item.price, item.state);
+        uint256 id = idx;
+        return (item.itemTitle, item.itemDescription, item.itemTag, item.itemPicture, item.price, item.state, item.seller, id);
+    }
+    
+    function getBuyerDetails(uint256 idx) public view returns(address, string, uint256){
+        ItemForSale memory item = itemsForSale[idx];
+        return (item.buyer, item.buyerInfo, item.creationTime);
     }
     
     //Checks how many items we have
@@ -50,12 +57,14 @@ contract BlockStore {
     //In order to try to make the seller not to cheat with the item that he sells
     //we are forcing him to make a deposit equals to the price that he ask for his item. 
     //The seller will have his deposit back when the buyer confirms that the goods are received.
-    function registerItemForSale(string _itemTitle, string _itemDescription, string _itemPicture, uint256 _price) canRegisterItemForSale(_itemDescription, _price, msg.value) public payable {
+    function registerItemForSale(string _itemTitle, string _itemDescription, string _itemTag, string _itemPicture, uint256 _price) canRegisterItemForSale(_itemDescription, _price, msg.value) public payable {
         ItemForSale memory item;
         item.seller = msg.sender;
         item.buyer = 0x0;
+        item.buyerInfo = "";
         item.itemTitle = _itemTitle;
         item.itemDescription = _itemDescription;
+        item.itemTag = _itemTag;
         item.itemPicture = _itemPicture;
         item.price = _price;
         item.state = ItemState.Created;
@@ -63,7 +72,7 @@ contract BlockStore {
         item.creationTime = time;
         itemsForSale.push(item);
         
-        emit registerItem(itemsForSale.length-1, _itemTitle, _itemDescription, _itemPicture, _price, time);
+        emit registerItem(itemsForSale.length-1, _itemTitle, _itemDescription, _itemTag, _itemPicture, _price, item.seller, time);
     }
     
     //Attemt to buy the goods at the given index
@@ -76,7 +85,7 @@ contract BlockStore {
         itemToBuy.buyerInfo = _buyerInfo;
         itemToBuy.state = ItemState.Locked;
         
-        emit itemBought(_itemIdx, itemToBuy.itemDescription, block.timestamp);
+        emit itemBought(_itemIdx, itemToBuy.buyer, itemToBuy.buyerInfo,block.timestamp);
     }
     
     //Buyer confirms that he has received the item so he and the seller can receive their deposits;
@@ -182,9 +191,9 @@ contract BlockStore {
     }
     
     //events goes below
-    event registerItem(uint256 _idx, string _itemTitle, string _itemDescription, string _itemPicture, uint256 _price, uint256 _time);
+    event registerItem(uint256 _idx, string _itemTitle, string _itemDescription, string _itemTag, string _itemPicture, uint256 _price, address _seller, uint256 _time);
     
-    event itemBought(uint256 _idx, string _itemDescription, uint256 _time);
+    event itemBought(uint256 _idx, address _buyer, string _buyerInfo, uint256 _time);
     
     event confirmItem(uint256 _itemIdx, string itemDescription, uint256 _time);
     
