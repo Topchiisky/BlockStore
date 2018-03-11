@@ -626,7 +626,7 @@ function onClickMore(itemIdx) {
     var account = window.web3.eth.defaultAccount;
     var card = $('#' + itemIdx);
     var state = card.attr('data-itemState');
-    var image = $('#0').find('img').attr('src');
+    var image = $('#' + itemIdx).find('img').attr('src');
     var modalPreviewImage = $('#modalPreviewImage');
     modalPreviewImage.attr('src', image);
     $('#modalViewItemTitle').text('Title: ' + card.attr('data-title'));
