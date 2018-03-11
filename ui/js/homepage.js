@@ -200,21 +200,21 @@ MyWeb3.prototype.checkForWeb3 = function () {
 
     window.web3.version.getNetwork((err, netId) => {
         switch (netId) {
-          case "1":
-            console.log('This is mainnet');
-            MyWeb3.networkAddress = "https://etherscan.io/tx/";
-            break
-          case "2":
-            console.log('This is the deprecated Morden test network.');
-            break
-          case "3":
-            console.log('This is the ropsten test network.');
-            MyWeb3.networkAddress = "https://ropsten.etherscan.io/tx/";
-            break
-          default:
-            MyWeb3.networkAddress = "https://ropsten.etherscan.io/tx/";
+            case "1":
+                console.log('This is mainnet');
+                MyWeb3.networkAddress = "https://etherscan.io/tx/";
+                break
+            case "2":
+                console.log('This is the deprecated Morden test network.');
+                break
+            case "3":
+                console.log('This is the ropsten test network.');
+                MyWeb3.networkAddress = "https://ropsten.etherscan.io/tx/";
+                break
+            default:
+                MyWeb3.networkAddress = "https://ropsten.etherscan.io/tx/";
         }
-      });
+    });
 
     return true;
 };
@@ -251,7 +251,7 @@ MyWeb3.prototype.makeDonation = function () {
     }
     MyWeb3.contract.donate({ from: window.web3.eth.defaultAccount, gas: 3000000, value: window.web3.toWei(donation, 'ether') }, (err, res) => {
         if (!err) {
-            console.log('making donation '+ res);
+            console.log('making donation ' + res);
             window.customHandlers.pendingTransactions(res, 'add', 'Donation:');
         }
     });
@@ -266,6 +266,21 @@ MyWeb3.prototype.registerDonationEvent = function () {
             window.myWeb3.getTotalDonations();
             console.log('Donation made: ' + JSON.stringify(result));
             window.customHandlers.pendingTransactions(result.transactionHash, 'remove');
+        }
+    });
+};
+
+MyWeb3.prototype.registerItemForSale = function (itemTitle, itemDescription, itemPicture, price) {
+    MyWeb3.contract.registerItemForSale(itemTitle, itemDescription, itemPicture, window.web3.toWei(price, 'ether'),{
+        from: window.web3.eth.defaultAccount, 
+        gas: 3000000, 
+        value: window.web3.toWei(price, 'ether')
+    }, (err, res) => {
+        if (!err) {
+            console.log('sending for sale ' + res);
+            window.customHandlers.pendingTransactions(res, 'add', itemTitle);
+        } else {
+            alert("Oups... something went wrong!");
         }
     });
 };
@@ -317,17 +332,105 @@ CustomHandlers.prototype.pendingTransactions = function (transactionHash, state,
     }
 
     if (state == 'remove') {
-        $("#"+transactionHash).remove();
+        $("#" + transactionHash).remove();
         if (pendingTransactions.children().length == 0 && $.inArray('show', modalPending.attr('class').split(' ')) >= 0) {
             $('#modalPending').modal('toggle');
         }
     }
 };
 
+CustomHandlers.prototype.browseButton = function(button, input, textField) {
+    button.on('click', function() {
+        input.click();
+    });
+    input.on('change', function(){
+        if ($('#imageInput')[0].files[0] === undefined) {
+            return;
+        }
+        if (input[0].files[0].type.indexOf('image') < 0) {
+            alert("Wrong file format! Please select an image!");
+            return;
+        }
+        textField.val(input[0].files[0].name);
+    });
+};
+
+CustomHandlers.prototype.clearModal = function(closeBtn, modal) {
+    closeBtn.on('click', function() {
+        modal.find("input[type=text], textarea, file").val("").trigger('keyup').trigger('focusout');
+    });
+};
+
+CustomHandlers.prototype.sendForSale = function(){
+    $('#sendForSale').on('click', function(){
+        if ($('#imageInput')[0].files[0].type.indexOf('image') < 0) {
+            alert("Wrong file format! Please select an image!");
+            return;
+        }
+
+        if ($('#modalAddForSaleTitleInput').val() == '') {
+            alert("Please provide a title");
+            return;
+        }
+        var itemTitle = $('#modalAddForSaleTitleInput').val();
+
+        if ($('#modalAddForSaleDescriptionInput').val() == '') {
+            alert("Please provide a description");
+            return;
+        }
+        var itemDescription = $('#modalAddForSaleDescriptionInput').val();
+
+        if (!$.isNumeric($('#modalAddForSalePriceInput').val())) {
+            alert("Please provide a price");
+            return;
+        }
+        var price = $('#modalAddForSalePriceInput').val();
+
+        var callback = function(imageHash){
+            window.myWeb3.registerItemForSale(itemTitle, itemDescription, imageHash, price);
+        };
+
+        window.myIPFS.uploadImage($('#imageInput')[0].files[0], callback);
+
+        $('#closeForSale').click();
+    });
+};
+
+var MyIPFS = function(){
+    this.ipfs = window.IpfsApi(IPFS_SETTINGS.host, IPFS_SETTINGS.port);
+};
+
+MyIPFS.prototype.getIpfs = function () {
+    return this.ipfs;
+};
+
+MyIPFS.prototype.uploadImage = function(imageFile, callback) {
+    var _ipfs = this.getIpfs();
+    var reader = new FileReader();
+    reader.onloadend = function() {
+        var buf = _ipfs.Buffer(reader.result);
+        _ipfs.add(buf, (err, result) => {
+            if(err) {
+                console.log(err);
+                return;
+              }
+              callback(result[0].hash);
+              var url = `https://ipfs.io/ipfs/${result[0].hash}`;
+              console.log(`Url --> ${url}`);
+        });
+    };
+    reader.readAsArrayBuffer(imageFile);
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     window.demo = new Demo(document.getElementById('grid'));
     window.myWeb3 = new MyWeb3();
+    window.myIPFS = new MyIPFS();
     window.customHandlers = new CustomHandlers();
     window.customHandlers.addNumericValidation($('#modalDonationInput'));
+    window.customHandlers.addNumericValidation($('#modalAddForSalePriceInput'));
     window.customHandlers.addMakeDonation($('#sendDonation'));
+    window.customHandlers.sendForSale();
+    window.customHandlers.clearModal($('#closeForSale'), $('#modalAddForSaleForm'));
+    window.customHandlers.browseButton($('#browseBtn'), $('#imageInput'), $('#modalAddForSalePriceImage'));
 });

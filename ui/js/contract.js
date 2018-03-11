@@ -1,4 +1,20 @@
+var ContractAddress = "0x1c48576dd82910042375f48016b0c7c01d7fba7a";
+
 var ContractABI = [
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "checkBalance",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
     {
         "constant": true,
         "inputs": [],
@@ -14,35 +30,31 @@ var ContractABI = [
         "type": "function"
     },
     {
-        "constant": false,
-        "inputs": [
+        "constant": true,
+        "inputs": [],
+        "name": "checkItemsForSaleLength",
+        "outputs": [
             {
-                "name": "_itemIdx",
+                "name": "",
                 "type": "uint256"
-            },
-            {
-                "name": "_buyerInfo",
-                "type": "string"
             }
         ],
-        "name": "buyItem",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
+        "payable": false,
+        "stateMutability": "view",
         "type": "function"
     },
     {
-        "constant": false,
-        "inputs": [
+        "constant": true,
+        "inputs": [],
+        "name": "checkTotalDonations",
+        "outputs": [
             {
-                "name": "_itemIdx",
+                "name": "",
                 "type": "uint256"
             }
         ],
-        "name": "confirmItemReceived",
-        "outputs": [],
         "payable": false,
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -80,6 +92,47 @@ var ContractABI = [
                 "type": "uint256"
             }
         ],
+        "name": "confirmItemReceived",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_itemIdx",
+                "type": "uint256"
+            },
+            {
+                "name": "_buyerInfo",
+                "type": "string"
+            }
+        ],
+        "name": "buyItem",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "withdrawDonations",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_itemIdx",
+                "type": "uint256"
+            }
+        ],
         "name": "cancelSale",
         "outputs": [],
         "payable": false,
@@ -90,7 +143,15 @@ var ContractABI = [
         "constant": false,
         "inputs": [
             {
+                "name": "_itemTitle",
+                "type": "string"
+            },
+            {
                 "name": "_itemDescription",
+                "type": "string"
+            },
+            {
+                "name": "_itemPicture",
                 "type": "string"
             },
             {
@@ -105,77 +166,26 @@ var ContractABI = [
         "type": "function"
     },
     {
-        "constant": true,
-        "inputs": [],
-        "name": "checkItemsForSaleLength",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "checkBalance",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [],
-        "name": "withdrawDonations",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "checkTotalDonations",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [],
-        "name": "donate",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
         "anonymous": false,
         "inputs": [
             {
                 "indexed": false,
+                "name": "_idx",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "_itemTitle",
+                "type": "string"
+            },
+            {
+                "indexed": false,
                 "name": "_itemDescription",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "name": "_itemPicture",
                 "type": "string"
             },
             {
@@ -190,6 +200,34 @@ var ContractABI = [
             }
         ],
         "name": "registerItem",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "_itemIdx",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "itemDescription",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "name": "_time",
+                "type": "uint256"
+            }
+        ],
+        "name": "itemCanceled",
         "type": "event"
     },
     {
@@ -243,27 +281,17 @@ var ContractABI = [
         "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "name": "_itemIdx",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "name": "itemDescription",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "name": "_time",
-                "type": "uint256"
-            }
-        ],
-        "name": "itemCanceled",
-        "type": "event"
+        "constant": false,
+        "inputs": [],
+        "name": "donate",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
     }
 ];
 
-var ContractAddress = "0xe007467b8d301a391361882b75becaa265de20c4";
+var IPFS_SETTINGS = {
+    host: 'localhost',
+    port: 5001
+}

@@ -276,7 +276,7 @@
                 <div class="modal-content">
                     <div class="modal-header text-center">
                         <h4 class="modal-title w-100 font-weight-bold">What are you selling?!</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button id="closeForSale" type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -299,20 +299,21 @@
                         <div class="md-form mb-4">
                             <i class="fa fa-money prefix grey-text"></i>
                             <input type="text" id="modalAddForSalePriceInput" class="form-control validate">
-                            <label for="modalAddForSalePriceInput">Price:</label>
+                            <label for="modalAddForSalePriceInput">Price: (ETH)</label>
                         </div>
                         <!-- /price -->
                         <!-- image -->
                         <div class="md-form mb-4">
                             <i class="fa fa-image prefix grey-text"></i>
-                            <input type="text" id="modalAddForSalePriceImage" class="form-control validate" readonly>
-                            <div class="input-group">`
-                                <button type="button" class="btn btn-primary btn-sm">Browse&hellip;</button>
+                            <input type="text" id="modalAddForSalePriceImage" class="form-control" readonly>
+                            <div class="input-group">
+                                <button id="browseBtn" type="button" class="btn btn-primary btn-sm">Browse&hellip;</button>
+                                <input style="visibility: hidden;" id="imageInput" type="file">
                             </div>
                         </div>
                         <!-- /image -->
                         <div class="modal-footer d-flex justify-content-center">
-                            <button class="btn btn-primary">Send
+                            <button id="sendForSale" class="btn btn-primary">Send
                                 <i class="fa fa-paper-plane-o ml-1"></i>
                             </button>
                         </div>
@@ -375,6 +376,8 @@
     <script type="text/javascript" src="node_modules/shufflejs/dist/shuffle.js"></script>
     <!-- Web3 -->
     <script type="text/javascript" src="node_modules/web3/dist/web3.min.js"></script>
+    <!-- IPFS API -->
+    <script type="text/javascript" src="node_modules/ipfs-api/dist/index.js"></script>
     <!-- Contract information-->
     <script type="text/javascript" src="js/contract.js"></script>
     <!-- Custom javascript -->
